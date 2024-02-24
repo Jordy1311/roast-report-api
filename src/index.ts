@@ -1,5 +1,5 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
+import express, { Express, Request, Response } from 'express';
+import dotenv from 'dotenv';
 
 import usersRouter from './routes/users';
 
@@ -11,8 +11,8 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use('/users', usersRouter);
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("This is GET /!!");
+app.get('/', (req: Request, res: Response) => {
+  res.send('Hi there!!');
 });
 
 app.listen(port, () => {
