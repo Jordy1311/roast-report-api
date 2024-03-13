@@ -11,8 +11,8 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use('/users', usersRouter);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hi there!!');
+app.get('/', (_: Request, res: Response) => {
+  res.status(200).send({ status: 'OK' });
 });
 
 app.listen(port, () => {
