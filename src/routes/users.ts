@@ -1,45 +1,36 @@
 import express, { Router, Request, Response } from 'express';
-import moment from 'moment';
 
-import { hasRequiredProperties } from '../utils';
-import { User, UserCreateData } from '../types/user';
+import User from '../models/User';
 
 const router: Router = express.Router();
 
-const users: User[] = [];
+router.post('/create', async (req: Request, res: Response) => {
+  const { email } = req.body;
 
-router.post('/create', (req: Request<UserCreateData>, res: Response) => {
-  if (!hasRequiredProperties(['name.first', 'name.last', 'email'], req)) {
-    res.sendStatus(400);
+  try {
+    const user = new User({ email });
+    const newUser = await user.save();
+
+    res.json(newUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server Error', error: err });
   }
-
-  const newUser: User = {
-    id: Math.random().toString(32).substring(2, 15),
-    name: {
-      first: req.body.name.first,
-      last: req.body.name.last,
-    },
-    email: req.body.email,
-    createdAt: moment(),
-  }
-
-  users.push(newUser);
-
-  res.status(201).send(newUser);
 });
 
-// GET USER BY ID?
+// ADD GET USER BY ID?
 
-router.get('/', (_, res: Response) => {
+router.get('/', async (_: Request, res: Response) => {
+  const users = await User.find({}, null, { limit: 10, lean: true });
   res.send(users);
 });
 
-router.patch('/:userId', (req: Request, res: Response) => {
+// router.patch('/:userId', (req: Request, res: Response) => {
 
-});
+// });
 
-router.delete('/:userId', (req: Request, res: Response) => {
+// router.delete('/:userId', (req: Request, res: Response) => {
 
-});
+// });
 
 export default router;

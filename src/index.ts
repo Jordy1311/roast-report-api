@@ -1,9 +1,11 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 
+import connectDB from './db';
 import usersRouter from './routes/users';
 
 dotenv.config();
+connectDB();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
