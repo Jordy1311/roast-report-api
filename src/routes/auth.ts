@@ -5,7 +5,7 @@ import User from '../models/User';
 
 const router: Router = express.Router();
 
-// PATH / URL
+// PATH:
 // localhost:3000/login
 
 router.post('/', async (req: Request, res: Response) => {
