@@ -26,7 +26,7 @@ router.post('/', async (req: Request, res: Response) => {
     if (isPasswordCorrect) {
       res.send('Login successful');
     } else {
-      res.status(401).send('Loging failed');
+      res.status(401).send('Login failed');
     }
   } catch (err) {
     console.error(err);
