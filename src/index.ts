@@ -1,11 +1,11 @@
 import dotenv from 'dotenv';
 
-import connectDB from './db';
+import connectToDB from './db';
 import app from './app';
 
 dotenv.config();
 
-connectDB();
+connectToDB();
 
 const port = process.env.PORT || 3000;
 
