@@ -1,8 +1,17 @@
+import { Request } from 'express';
 import mongoose from 'mongoose';
 
 interface User {
   email: string;
   password: string;
+}
+
+export interface UserTokenPayload {
+  email: string;
+}
+
+export interface RequestWithUserPayload extends Request {
+  user: UserTokenPayload;
 }
 
 const userSchema = new mongoose.Schema<User>({

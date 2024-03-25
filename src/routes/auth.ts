@@ -1,7 +1,8 @@
 import express, { Router, Request, Response } from 'express';
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-import User from '../models/User';
+import User, { UserTokenPayload } from '../models/User';
 
 const router: Router = express.Router();
 
@@ -15,22 +16,28 @@ router.post('/', async (req: Request, res: Response) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      res.status(401).send('Unable to find user');
+      return res.status(401).send('Unable to find user');
     }
 
-    const isPasswordCorrect = await bcrypt.compare(
+    const passwordIsCorrect = await bcrypt.compare(
       unHashedPassword,
       user?.password
     );
 
-    if (isPasswordCorrect) {
-      res.send('Login successful');
+    if (passwordIsCorrect) {
+      const tokenPayload: UserTokenPayload = { email: user.email };
+      const accessToken = jwt.sign(
+        tokenPayload,
+        process.env.ACCESS_TOKEN_SECRET
+      );
+
+      return res.json({ accessToken });
     } else {
-      res.status(401).send('Login failed');
+      return res.status(401).send('Login failed');
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server Error', error: err });
+    return res.status(500).json({ message: 'Server Error', error: err });
   }
 });
 

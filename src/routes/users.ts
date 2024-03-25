@@ -1,7 +1,8 @@
 import express, { Router, Request, Response } from 'express';
 const bcrypt = require('bcrypt');
 
-import User from '../models/User';
+import { isLoggedIn } from '../middlewares/authMiddleware';
+import User, { RequestWithUserPayload } from '../models/User';
 
 const router: Router = express.Router();
 
@@ -22,9 +23,12 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-router.get('/', async (_: Request, res: Response) => {
-  const users = await User.find({}, null, { limit: 10, lean: true });
-  res.send(users);
-});
+router.get('/', isLoggedIn,
+  async (req: Request, res: Response) => {
+    // TODO: would be great if I didn't have to cast this type but it's finicky asf and this works
+    const users = await User.find({ email: (req as RequestWithUserPayload).user.email }, null, { lean: true });
+    res.send(users);
+  }
+);
 
 export default router;
