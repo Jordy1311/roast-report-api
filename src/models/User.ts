@@ -10,10 +10,6 @@ export interface UserTokenPayload {
   email: string;
 }
 
-export interface RequestWithUserPayload extends Request {
-  user: UserTokenPayload;
-}
-
 const userSchema = new mongoose.Schema<User>({
   email: {
     type: String,
