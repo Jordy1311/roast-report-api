@@ -1,10 +1,9 @@
 export interface FieldDefinition {
   fieldName: string;
-  type: string | number | null,
+  type: 'string' | 'array',
   isRequired?: boolean;
 }
 
-// TODO: send back nice error message to client rather than 👍 or 👎
 /**
  * Validates a request body against an expected structure.
  *
@@ -20,18 +19,16 @@ export function isValidRequest(
     const { fieldName, type: expectedType, isRequired = false } = field;
     const fieldValue = requestBody[fieldName];
 
-    // required field is not provided
-    if (fieldValue === undefined && isRequired) {
+    const isRequiredAndNotProvided = isRequired && fieldValue === undefined;
+    const isRequiredAndEmptyString = isRequired && expectedType === 'string' && fieldValue === '';
+    const typeMismatch = typeof fieldValue !== expectedType;
+    const expectedArrayButNotArray = expectedType === 'array' && !Array.isArray(fieldValue);
+
+    if (isRequiredAndNotProvided || isRequiredAndEmptyString) {
       return false;
     }
 
-    // required field is expected to be string type but is empty string
-    if (isRequired && expectedType === 'string' && fieldValue === '') {
-      return false;
-    }
-
-    // field is not expected type
-    if (fieldValue !== undefined && typeof fieldValue !== expectedType) {
+    if (fieldValue && typeMismatch && expectedArrayButNotArray) {
       return false;
     }
   }
@@ -57,8 +54,8 @@ export function pick(
   const requestedProperties: Record<string, unknown> = {};
 
   for (const property of properties) {
-    // TODO: this is a bit weird, clarify: object[property] != false
-    if (object.hasOwnProperty(property) && object[property] != false) {
+    const hasValue = object[property] != false;
+    if (object.hasOwnProperty(property) && hasValue) {
       requestedProperties[property] = object[property];
     }
   }

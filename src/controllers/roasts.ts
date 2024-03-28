@@ -9,11 +9,11 @@ export async function createRoast(req: Request, res: Response) {
     const expectedFields: FieldDefinition[] = [
       { fieldName: 'name', type: 'string', isRequired: true },
       { fieldName: 'roaster', type: 'string', isRequired: true },
-      { fieldName: 'origin', type: 'string' },
+      { fieldName: 'origin', type: 'array' },
       { fieldName: 'composition', type: 'string' },
       { fieldName: 'processMethod', type: 'string' },
-      { fieldName: 'roastedFor', type: 'string' },
-      { fieldName: 'tastingNotes', type: 'string' },
+      { fieldName: 'roastedFor', type: 'array' },
+      { fieldName: 'tastingNotes', type: 'array' },
       { fieldName: 'rating', type: 'string' },
       { fieldName: 'notes', type: 'string' },
     ];
