@@ -37,3 +37,9 @@ export async function createRoast(req: Request, res: Response) {
     return res.status(500).json({ message: 'Internal server error' })
   }
 }
+
+export async function getUsersRoasts(req: Request, res: Response) {
+  const usersRoasts = await Roast.find({ userId: req.user!.id }).limit(20).lean();
+
+  res.send(usersRoasts);
+}
