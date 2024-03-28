@@ -31,14 +31,12 @@ export async function login(req: Request, res: Response) {
         process.env.ACCESS_TOKEN_SECRET
       );
 
-      return res.json({ accessToken });
+      return res.status(200).json(accessToken);
     } else {
-      return res.status(401).send('Login failed');
+      return res.sendStatus(401);
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).json(
-      { message: 'Server Error', error: err }
-    );
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }

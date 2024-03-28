@@ -21,16 +21,19 @@ export async function createRoast(req: Request, res: Response) {
     if (!isValidRequest(req.body, expectedFields)) {
       return res
         .status(400)
-        .send('Invalid request body: missing or incorrect field types');
+        .send({ message: 'Invalid request body: missing or incorrect field types' });
     }
 
     const cleanRoastData = pick(req.body, expectedFields.map((field) => field.fieldName));
 
-    const newCoffee = await Roast.create(cleanRoastData);
+    const newCoffee = await Roast.create({
+      userId: req.user!.id,
+      ...cleanRoastData,
+    });
 
-    return res.status(201).json({ message: 'Roast created successfully!' });
+    return res.status(201).json(newCoffee);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Internal server error' })
+    return res.status(500).json({ message: 'Internal server error' })
   }
 }

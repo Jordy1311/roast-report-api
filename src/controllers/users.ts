@@ -12,17 +12,14 @@ export async function createUser(req: Request, res: Response) {
     const newUser = await User.create(
       { email, password: hashedPassword }
     );
-    res.json(newUser);
+    return res.status(201).json(newUser);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'Server Error', error: err });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
 
 export async function getUser(req: Request, res: Response) {
-  const user = await User.findOne(
-    { email: req.user!.email }
-  ).lean();
-
-  res.send(user);
+  const user = await User.findOne({ email: req.user!.email }).lean();
+  return res.send(user);
 }
