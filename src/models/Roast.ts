@@ -8,6 +8,7 @@ interface Roast {
   roastedFor?: String;
   roaster: String;
   tastingNotes?: [String];
+  userId: String;
 }
 
 const roastSchema = new mongoose.Schema<Roast>({
@@ -24,6 +25,7 @@ const roastSchema = new mongoose.Schema<Roast>({
     required: true,
   },
   tastingNotes: [String],
+  userId: String,
 });
 
 export default mongoose.model<Roast>('Roast', roastSchema);

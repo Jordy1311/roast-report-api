@@ -1,12 +1,14 @@
 import express, { Express, Request, Response } from 'express';
 
-import usersRouter from './routes/users';
 import authRouter from './routes/auth';
+import roastsRouter from './routes/roasts';
+import usersRouter from './routes/users';
 
 const app: Express = express();
 
 app.use(express.json());
 app.use('/login', authRouter);
+app.use('/roasts', roastsRouter);
 app.use('/users', usersRouter);
 
 app.get(
