@@ -23,7 +23,6 @@ export async function login(req: Request, res: Response) {
       const tokenPayload: UserTokenPayload = {
         // TODO: unsure why I have to .toString here
         id: user._id.toString(),
-        email: user.email
       };
 
       const accessToken = jwt.sign(
