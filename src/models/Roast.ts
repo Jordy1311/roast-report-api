@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
 
 interface Roast {
-  composition?: String;
-  name: String;
-  origin?: [String];
-  processMethod?: String;
-  roastedFor?: [String];
-  roaster: String;
-  tastingNotes?: [String];
-  userId: String;
+  composition?: string;
+  name: string;
+  origin?: [string];
+  processMethod?: string;
+  roastedFor?: [string];
+  roaster: string;
+  tastingNotes?: [string];
+  userId: string;
 }
 
 const roastSchema = new mongoose.Schema<Roast>({

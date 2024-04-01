@@ -1,13 +1,12 @@
 import mongoose from 'mongoose';
 
 interface User {
-  email: String;
-  password: String;
+  email: string;
+  password: string;
 }
 
 export interface UserTokenPayload {
-  id: String;
-  email: String;
+  id: string;
 }
 
 const userSchema = new mongoose.Schema<User>({
