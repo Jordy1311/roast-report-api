@@ -30,7 +30,7 @@ export async function login(req: Request, res: Response) {
         process.env.ACCESS_TOKEN_SECRET
       );
 
-      return res.status(200).json(accessToken);
+      return res.status(200).json({ accessToken });
     } else {
       return res.sendStatus(401);
     }
