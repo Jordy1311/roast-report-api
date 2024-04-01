@@ -20,6 +20,6 @@ export async function createUser(req: Request, res: Response) {
 }
 
 export async function getUser(req: Request, res: Response) {
-  const user = await User.findOne({ email: req.user!.email }).lean();
+  const user = await User.findOne({ _id: req.user!.id }).lean();
   return res.send(user);
 }
