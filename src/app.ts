@@ -7,9 +7,9 @@ import usersRouter from './routes/users';
 const app: Express = express();
 
 app.use(express.json());
-app.use('/login', authRouter);
-app.use('/roasts', roastsRouter);
-app.use('/users', usersRouter);
+app.use('/v1/login', authRouter);
+app.use('/v1/roasts', roastsRouter);
+app.use('/v1/users', usersRouter);
 
 app.get(
   [ '/', '/health', '/status' ],
