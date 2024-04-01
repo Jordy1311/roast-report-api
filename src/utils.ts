@@ -39,7 +39,7 @@ export function isValidRequest(
 /**
  * Picks specific properties from an object, returning a new object with only the requested properties.
  * 
- * **Note:** This function can only pick properties from the top level of the object. It cannot pick 
+ * **Note:** This function can only pick properties from the top level of the object. It cannot pick
  * properties from nested objects within the source object.
  *
  * @param object The source object to pick properties from.
