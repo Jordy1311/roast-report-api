@@ -6,6 +6,12 @@ import usersRouter from './routes/users';
 
 const app: Express = express();
 
+// TODO: development only
+app.use((req: any, res: any, next: any) => {
+  console.log(`Request for ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 app.use(express.json());
 app.use('/v1/login', authRouter);
 app.use('/v1/roasts', roastsRouter);
