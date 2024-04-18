@@ -6,7 +6,9 @@ It's responsible for everything including auth.
 
 ## To run this app
 
-1. Create a `.env` at the repo root and define the following variables:
+1. Clone this repo
+
+2. Create a `.env` at the root and define:
 
 ```
 PORT=<port the app will run on>
@@ -14,9 +16,9 @@ MONGODB_URI=<your own mongodb connectionString>
 ACCESS_TOKEN_SECRET=<your own random secret>
 ```
 
-2. Run `npm ci`
+3. Run `npm ci`
 
-3. Run `npm run dev`
+4. Run `npm run dev`
 
 The server will start on the specified port (or 3000 as a default) and connect to your mongoDB instance.
 
