@@ -43,3 +43,12 @@ export async function getUsersRoasts(req: Request, res: Response) {
 
   res.send(usersRoasts);
 }
+
+export async function deleteRoast(req: Request, res: Response) {
+  const deleteResponse = await Roast.deleteOne({ _id: req.params.id });
+
+  if (deleteResponse.deletedCount) {
+    return res.sendStatus(204);
+  }
+  return res.send(404);
+}
