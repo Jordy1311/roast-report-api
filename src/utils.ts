@@ -1,6 +1,6 @@
 export interface FieldDefinition {
   fieldName: string;
-  type: 'string' | 'array',
+  type: 'string' | 'array' | 'number',
   isRequired?: boolean;
 }
 

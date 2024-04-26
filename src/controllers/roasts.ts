@@ -14,7 +14,7 @@ export async function createRoast(req: Request, res: Response) {
       { fieldName: 'processMethod', type: 'string' },
       { fieldName: 'roastedFor', type: 'array' },
       { fieldName: 'tastingNotes', type: 'array' },
-      { fieldName: 'rating', type: 'string' },
+      { fieldName: 'rating', type: 'number' },
       { fieldName: 'notes', type: 'string' },
     ];
 
