@@ -3,8 +3,10 @@ import mongoose from 'mongoose';
 interface Roast {
   composition?: string;
   name: string;
+  notes?: string;
   origin?: [string];
   processMethod?: string;
+  rating?: number;
   roastedFor?: [string];
   roaster: string;
   tastingNotes?: [string];
@@ -17,11 +19,13 @@ const roastSchema = new mongoose.Schema<Roast>({
     type: String,
     required: true,
   },
+  notes: String,
   origin: {
     type: [String],
     default: undefined,
   },
   processMethod: String,
+  rating: Number,
   roastedFor: {
     type: [String],
     default: undefined,
