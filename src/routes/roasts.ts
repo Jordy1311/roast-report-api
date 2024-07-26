@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 
 import { isLoggedIn } from '../middlewares/authMiddleware';
-import { createRoast, deleteRoast, getUsersRoasts } from '../controllers/roasts';
+import { createRoast, deleteRoast, getUsersRoasts, updateRoast } from '../controllers/roasts';
 
 const router: Router = express.Router();
 
@@ -10,6 +10,7 @@ const router: Router = express.Router();
 
 router.post('/', isLoggedIn, createRoast);
 router.get('/', isLoggedIn, getUsersRoasts);
+router.patch('/:id', isLoggedIn, updateRoast);
 router.delete('/:id', isLoggedIn, deleteRoast);
 
 export default router;
