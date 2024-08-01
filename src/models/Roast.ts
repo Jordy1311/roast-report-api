@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 interface Roast {
   composition?: string;
@@ -41,4 +41,4 @@ const roastSchema = new mongoose.Schema<Roast>({
   userId: String,
 });
 
-export default mongoose.model<Roast>('Roast', roastSchema);
+export default mongoose.model<Roast>("Roast", roastSchema);
