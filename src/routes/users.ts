@@ -1,14 +1,14 @@
-import express, { Router } from 'express';
+import express, { Router } from "express";
 
-import { isLoggedIn } from '../middlewares/authMiddleware';
-import { createUser, getUser } from '../controllers/users';
+import { isLoggedIn } from "../middlewares/authMiddleware";
+import { createUser, getUser } from "../controllers/users";
 
 const router: Router = express.Router();
 
 // PATH:
 // localhost:3000/users
 
-router.post('/', createUser);
-router.get('/', isLoggedIn, getUser);
+router.post("/", createUser);
+router.get("/", isLoggedIn, getUser);
 
 export default router;

@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
-const bcrypt = require('bcrypt');
+import { Request, Response } from "express";
+const bcrypt = require("bcrypt");
 
-import User from '../models/User';
+import User from "../models/User";
 
 export async function createUser(req: Request, res: Response) {
   const { email, password: unHashedPassword } = req.body;
@@ -9,13 +9,11 @@ export async function createUser(req: Request, res: Response) {
   const hashedPassword = await bcrypt.hash(unHashedPassword, 10);
 
   try {
-    const newUser = await User.create(
-      { email, password: hashedPassword }
-    );
+    const newUser = await User.create({ email, password: hashedPassword });
     return res.status(201).json(newUser);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: "Internal server error" });
   }
 }
 

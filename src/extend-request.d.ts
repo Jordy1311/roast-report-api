@@ -1,6 +1,6 @@
 import { UserTokenPayload } from "./models/User";
 
-export { };
+export {};
 
 declare global {
   namespace Express {
