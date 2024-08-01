@@ -1,6 +1,6 @@
 export interface FieldDefinition {
   fieldName: string;
-  type: 'string' | 'array' | 'number',
+  type: "string" | "array" | "number";
   isRequired?: boolean;
 }
 
@@ -20,9 +20,11 @@ export function isValidRequest(
     const fieldValue = requestBody[fieldName];
 
     const isRequiredAndNotProvided = isRequired && fieldValue === undefined;
-    const isRequiredAndEmptyString = isRequired && expectedType === 'string' && fieldValue === '';
+    const isRequiredAndEmptyString =
+      isRequired && expectedType === "string" && fieldValue === "";
     const typeMismatch = typeof fieldValue !== expectedType;
-    const expectedArrayButNotArray = expectedType === 'array' && !Array.isArray(fieldValue);
+    const expectedArrayButNotArray =
+      expectedType === "array" && !Array.isArray(fieldValue);
 
     if (isRequiredAndNotProvided || isRequiredAndEmptyString) {
       return false;
@@ -38,24 +40,21 @@ export function isValidRequest(
 
 /**
  * Picks specific properties from an object, returning a new object with only the requested properties.
- * 
+ *
  * **Note:** This function can only pick properties from the top level of the object. It cannot pick
  * properties from nested objects within the source object.
  *
  * @param object The source object to pick properties from.
  * @param properties An array of string keys representing the desired properties.
- * @returns A new object containing only the requested properties from the source object, 
+ * @returns A new object containing only the requested properties from the source object,
  *          or an empty object if no properties exist or the source object is empty.
  */
-export function pick(
-  object: Record<string, unknown>,
-  properties: string[],
-) {
+export function pick(object: Record<string, unknown>, properties: string[]) {
   const requestedProperties: Record<string, unknown> = {};
 
   for (const property of properties) {
-    const hasValue = object[property] != false;
-    if (object.hasOwnProperty(property) && hasValue) {
+    //const hasValue = object[property] != false;
+    if (object.hasOwnProperty(property)) {
       requestedProperties[property] = object[property];
     }
   }
