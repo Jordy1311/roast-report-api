@@ -6,6 +6,10 @@ import User from "../models/User";
 export async function createUser(req: Request, res: Response) {
   const { email, password: unHashedPassword } = req.body;
 
+  if (!email || !unHashedPassword) {
+    return res.status(400).json({ message: "Invalid request, missing data" });
+  }
+
   const hashedPassword = await bcrypt.hash(unHashedPassword, 10);
 
   try {
