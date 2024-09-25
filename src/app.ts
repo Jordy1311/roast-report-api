@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from "express";
 const cors = require('cors');
 
 var corsOptions = {
-  origin: 'https://roastreport.web.app',
+  origin: ['https://roastreport.web.app', 'http://localhost/'],
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
