@@ -1,20 +1,29 @@
 import express, { Express, Request, Response } from "express";
 const cors = require('cors');
 
-var corsOptions = {
-  origin: ['https://roastreport.web.app', 'http://localhost/'],
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
-
 import authRouter from "./routes/auth";
 import roastsRouter from "./routes/roasts";
 import usersRouter from "./routes/users";
 
 const app: Express = express();
 
-// TODO: development only
-app.use((req: any, _: any, next: any) => {
-  console.log(`Request for ${req.method} ${req.originalUrl}`);
+const whitelist = ["https://roastreport.web.app", "http://localhost/"];
+const corsOptions = {
+  origin: function (origin: string, callback: Function) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+
+app.use((req: Request, _: any, next: any) => {
+  const dateAndTime = new Date().toLocaleString("en-GB", { timeZone: "NZ" });
+  console.log(
+    `At ${dateAndTime}: Request for ${req.method} ${req.originalUrl}`,
+  );
+
   next();
 });
 
