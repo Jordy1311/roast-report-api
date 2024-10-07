@@ -7,9 +7,9 @@ import usersRouter from "./routes/users";
 
 const app: Express = express();
 
-const whitelist = ["https://roastreport.web.app", "http://localhost/"];
+const whitelist = ["https://roastreport.web.app", "localhost/"];
 const corsOptions = {
-  origin: function (origin: string, callback: Function) {
+  origin: (origin: string, callback: Function) => {
     if (whitelist.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
