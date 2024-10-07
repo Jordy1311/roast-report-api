@@ -10,6 +10,7 @@ const app: Express = express();
 const whitelist = ["https://roastreport.web.app", "localhost/"];
 const corsOptions = {
   origin: (origin: string, callback: Function) => {
+    console.log("origin", origin);
     if (whitelist.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
