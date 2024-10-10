@@ -7,12 +7,12 @@ import usersRouter from "./routes/users";
 
 const app: Express = express();
 
-const whitelist = ["https://roastreport.web.app", "localhost/"];
 // Error: Not allowed by CORS http://localhost:4200
+const whitelist = ["https://roastreport.web.app", "http://localhost:4200"];
 const corsOptions = {
   origin: (origin: string, callback: Function) => {
     console.log("origin", origin);
-    if (whitelist.indexOf(origin) !== -1 || !origin) {
+    if (whitelist.includes(origin) || !origin) {
       callback(null, true);
     } else {
       callback(new Error(`Not allowed by CORS ${origin}`));
