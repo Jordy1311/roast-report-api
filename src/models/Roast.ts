@@ -39,6 +39,6 @@ const roastSchema = new mongoose.Schema<Roast>({
     default: undefined,
   },
   userId: String,
-});
+}, { timestamps: true });
 
 export default mongoose.model<Roast>("Roast", roastSchema);

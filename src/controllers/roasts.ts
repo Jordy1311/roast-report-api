@@ -43,6 +43,7 @@ export async function createRoast(req: Request, res: Response) {
 
 export async function getUsersRoasts(req: Request, res: Response) {
   const usersRoasts = await Roast.find({ userId: req.user!.id })
+    .sort({ createdAt: 1 })
     .limit(20)
     .lean();
 
