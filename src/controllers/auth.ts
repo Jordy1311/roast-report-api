@@ -42,7 +42,7 @@ export async function requestLogin(req: Request, res: Response) {
 
     sendEmail([ email ], emailSubject, emailBody);
 
-    return res.status(200).json({ thing: 'hiiiii' });
+    return res.sendStatus(200);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Internal server error" });
@@ -79,10 +79,10 @@ export async function confirmLogin(req: Request, res: Response) {
 
       return res.status(200).json({ accessToken });
     } else {
-      return res.sendStatus(401);
+      return res.status(500).json({ message: "Internal server error - No user at confirm login" });
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ message: "Internal server error - At confirm login" });
   }
 }

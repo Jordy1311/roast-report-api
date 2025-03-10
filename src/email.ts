@@ -20,15 +20,14 @@ export const sendEmail = async (
   text: string
 ) => {
   try {
-    const response = await transporter.sendMail({
+    await transporter.sendMail({
       from: `Roast Report <${process.env.EMAIL_USER}>`,
       to: recipients,
       subject,
       text,
       html: text,
     });
-    console.log('Email sent:');
-    console.log({ response });
+    console.log(`Email sent to: ${recipients.join(", ")}`);
   } catch (error) {
     console.error('Error sending email: ', error);
   }
