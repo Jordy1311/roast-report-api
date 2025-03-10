@@ -1,12 +1,13 @@
 import express, { Router } from "express";
 
-import { login } from "../controllers/auth";
+import { requestLogin, confirmLogin } from "../controllers/auth";
 
 const router: Router = express.Router();
 
 // PATH:
-// localhost:3000/login
+// localhost:3000/v1/login
 
-router.post("/", login);
+router.post("/", requestLogin);
+router.post("/confirm/:confirmationCode", confirmLogin);
 
 export default router;

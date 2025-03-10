@@ -5,6 +5,22 @@ export interface FieldDefinition {
 }
 
 /**
+ * Generates a 16-character long string including numbers and lowercase letters.
+ * This is used for generating confimration codes of login.
+ *
+ * @returns A 16-character long string.
+ */
+export function generateRandomString(): string {
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < 16; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    result += characters[randomIndex];
+  }
+  return result;
+}
+
+/**
  * Validates a request body against an expected structure.
  *
  * @param requestBody The data object from the request body.
@@ -36,6 +52,17 @@ export function isValidRequest(
   }
 
   return true;
+}
+
+/**
+ * Checks whether an input string is a valid email address.
+ *
+ * @param email The input string to check.
+ * @returns True if the input is a valid email address, otherwise false.
+ */
+export function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
 }
 
 /**
