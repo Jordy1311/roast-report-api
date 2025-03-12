@@ -9,8 +9,12 @@ import { isValidEmail, generateRandomString } from "../utils";
 export async function requestLogin(req: Request, res: Response) {
   const { email } = req.body;
 
-  if (!email || !isValidEmail(email)) {
-    return res.status(400).json({ message: "Email address is required" });
+  if (!email) {
+    return res.status(400).json({ status: "error", message: "An email address is required" });
+  }
+
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ status: "error", message: "A valid email address is required" });
   }
 
   try {
@@ -42,10 +46,10 @@ export async function requestLogin(req: Request, res: Response) {
 
     sendEmail([ email ], emailSubject, emailBody);
 
-    return res.sendStatus(200);
+    return res.status(200).json({ status: "success" });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ status: "error", message: "Internal server error" });
   }
 }
 
