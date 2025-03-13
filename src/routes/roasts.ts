@@ -10,8 +10,7 @@ import {
 
 const router: Router = express.Router();
 
-// PATH:
-// localhost:3000/roasts
+// PATH: localhost:3000/v1/roasts
 
 router.post("/", isLoggedIn, createRoast);
 router.get("/", isLoggedIn, getUsersRoasts);

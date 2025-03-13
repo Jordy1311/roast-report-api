@@ -5,8 +5,7 @@ import { createUser, getUser } from "../controllers/users";
 
 const router: Router = express.Router();
 
-// PATH:
-// localhost:3000/users
+// PATH: localhost:3000/v1/users
 
 router.post("/", createUser);
 router.get("/", isLoggedIn, getUser);
