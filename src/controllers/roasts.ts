@@ -19,9 +19,7 @@ export async function createRoast(req: Request, res: Response) {
     ];
 
     if (!isValidRequest(req.body, expectedFields)) {
-      return res.status(400).send({
-        message: "Invalid request body: missing or incorrect field types",
-      });
+      return res.status(400).send("Missing fields or incorrect field types");
     }
 
     const cleanRoastData = pick(
@@ -37,73 +35,83 @@ export async function createRoast(req: Request, res: Response) {
     return res.status(201).json(newCoffee);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).send("Internal server error");
   }
 }
 
 export async function getUsersRoasts(req: Request, res: Response) {
-  const usersRoasts = await Roast.find({ userId: req.user!.id })
-    .sort({ createdAt: 1 })
-    .limit(20)
-    .lean();
+  try {
+    const usersRoasts = await Roast.find({ userId: req.user!.id })
+      .sort({ createdAt: 1 })
+      .lean();
 
-  res.send(usersRoasts);
+    return res.status(200).json(usersRoasts);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json("Internal server error");
+  }
 }
 
 export async function updateRoast(req: Request, res: Response) {
-  const roastIdToBeUpdated = req.params.id;
-  const roastToBeUpdated = await Roast.findOne({
-    _id: roastIdToBeUpdated,
-  }).lean();
-
-  if (!roastToBeUpdated) {
-    return res
-      .status(404)
-      .send({ message: "Roast not found, unable to update" });
-  }
-
-  const expectedFields: FieldDefinition[] = [
-    { fieldName: "name", type: "string" },
-    { fieldName: "roaster", type: "string" },
-    { fieldName: "origin", type: "array" },
-    { fieldName: "composition", type: "string" },
-    { fieldName: "processMethod", type: "string" },
-    { fieldName: "roastedFor", type: "array" },
-    { fieldName: "tastingNotes", type: "array" },
-    { fieldName: "rating", type: "number" },
-    { fieldName: "notes", type: "string" },
-  ];
-
-  if (!isValidRequest(req.body, expectedFields)) {
-    return res
-      .status(400)
-      .send({ message: "Invalid request body: incorrect field types" });
-  }
-
-  const cleanRoastData = pick(
-    req.body,
-    expectedFields.map((field) => field.fieldName),
-  );
-
   try {
+    const roastIdToBeUpdated = req.params.id;
+    const roastToBeUpdated = await Roast.findOne({
+      _id: roastIdToBeUpdated,
+      userId: req.user!.id,
+    }).lean();
+
+    if (!roastToBeUpdated) {
+      return res.sendStatus(404);
+    }
+
+    const expectedFields: FieldDefinition[] = [
+      { fieldName: "name", type: "string" },
+      { fieldName: "roaster", type: "string" },
+      { fieldName: "origin", type: "array" },
+      { fieldName: "composition", type: "string" },
+      { fieldName: "processMethod", type: "string" },
+      { fieldName: "roastedFor", type: "array" },
+      { fieldName: "tastingNotes", type: "array" },
+      { fieldName: "rating", type: "number" },
+      { fieldName: "notes", type: "string" },
+    ];
+
+    if (!isValidRequest(req.body, expectedFields)) {
+      return res.status(400).send("Missing fields or incorrect field types");
+    }
+
+    const cleanRoastData = pick(
+      req.body,
+      expectedFields.map((field) => field.fieldName),
+    );
+
     const updatedRoast = await Roast.findOneAndUpdate(
-      { _id: roastIdToBeUpdated },
+      { _id: roastIdToBeUpdated, userId: req.user!.id },
       cleanRoastData,
-      { new: true, upsert: true },
+      { new: true },
     );
 
     return res.status(200).json(updatedRoast);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).send("Internal server error");
   }
 }
 
 export async function deleteRoast(req: Request, res: Response) {
-  const deleteResponse = await Roast.deleteOne({ _id: req.params.id });
+  try {
+    const deleteResponse = await Roast.deleteOne({
+      _id: req.params.id,
+      userId: req.user!.id,
+    });
 
-  if (deleteResponse.deletedCount) {
-    return res.sendStatus(204);
+    if (deleteResponse.deletedCount) {
+      return res.sendStatus(204);
+    } else {
+      return res.sendStatus(404);
+    }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("Internal server error");
   }
-  return res.send(404);
 }
