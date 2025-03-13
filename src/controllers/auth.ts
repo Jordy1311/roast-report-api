@@ -13,11 +13,11 @@ export async function requestLogin(req: Request, res: Response) {
     return res.status(400).send("An email address is required");
   }
 
-  if (!isValidEmail(email)) {
-    return res.status(400).send("A valid email address is required");
-  }
-
   try {
+    if (!isValidEmail(email)) {
+      return res.status(400).send("A valid email address is required");
+    }
+
     const loginRequest =
       await LoginRequest.findOne({ email }).lean() ||
       await LoginRequest.create({ email, confirmationCode: generateConfirmationCode() });
