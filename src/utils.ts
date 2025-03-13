@@ -1,3 +1,5 @@
+import { confirmationCodeLength } from "./models/LoginRequest";
+
 export interface FieldDefinition {
   fieldName: string;
   type: "string" | "array" | "number";
@@ -5,15 +7,14 @@ export interface FieldDefinition {
 }
 
 /**
- * Generates a 16-character long string including numbers and lowercase letters.
- * This is used for generating confimration codes of login.
+ * Generates a random string used as login confirmation codes.
  *
- * @returns A 16-character long string.
+ * @returns A random string of confirmationCodeLength length.
  */
-export function generateRandomString(): string {
-  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+export function generateConfirmationCode(): string {
+  const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~';
   let result = '';
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < confirmationCodeLength; i++) {
     const randomIndex = Math.floor(Math.random() * characters.length);
     result += characters[randomIndex];
   }

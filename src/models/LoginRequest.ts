@@ -5,18 +5,22 @@ interface LoginRequest {
   confirmationCode: string;
 }
 
+export const confirmationCodeLength = 16;
+
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 const loginRequestSchema = new mongoose.Schema<LoginRequest>({
   email: {
     type: String,
     required: true,
     unique: true,
-    match: /.+\@.+\..+/,
+    match: emailRegex,
   },
   confirmationCode: {
     type: String,
     required: true,
     unique: true,
-    length: 6,
+    length: confirmationCodeLength,
   },
 }, {
   timestamps: true,
