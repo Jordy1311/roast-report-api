@@ -13,7 +13,7 @@ export function isLoggedIn(req: Request, res: Response, next: NextFunction) {
     token,
     process.env.ACCESS_TOKEN_SECRET,
     (err: unknown, user: UserTokenPayload) => {
-      if (err) return res.sendStatus(403);
+      if (err) return res.sendStatus(401);
 
       req.user = user;
 
