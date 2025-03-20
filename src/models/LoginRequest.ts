@@ -15,17 +15,21 @@ const loginRequestSchema = new mongoose.Schema<LoginRequest>({
     required: true,
     unique: true,
     match: emailRegex,
+    index: true,
   },
   confirmationCode: {
     type: String,
     required: true,
     unique: true,
     length: confirmationCodeLength,
+    index: true,
   },
 }, {
   timestamps: true,
   expireAfterSeconds: 900, // 15 minutes
 });
+
+loginRequestSchema.index({ email: 1, confirmationCode: 1 });
 
 loginRequestSchema.index({ createdAt: 1 }, { expireAfterSeconds: 900 });
 
