@@ -124,7 +124,7 @@ export async function getDistinctRoasters(req: Request, res: Response) {
     // ignoring case-sensitivity, diacritics, whitespace, and punctuation
     const usersRoasters = await Roast.distinct(
       'roaster',
-      { _id: userId },
+      { userId },
       { collation: { locale: 'en', strength: 1, alternate: 'shifted' } }
     );
 
