@@ -15,8 +15,13 @@ export function isLoggedIn(req: Request, res: Response, next: NextFunction) {
     async (err: unknown, userToken: UserTokenPayload) => {
       if (err) return res.sendStatus(401);
 
-      const actualUser = await User.findOne({ _id: userToken.id })
+      const actualUser = await User.findOne(
+        { _id: userToken.id }, { _id: 1 }
+      ).lean();
+
       if (!actualUser) return res.sendStatus(401);
+
+      console.log({ actualUser });
 
       req.user = userToken;
 
