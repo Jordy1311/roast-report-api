@@ -33,12 +33,18 @@ const roastSchema = new mongoose.Schema<Roast>({
   roaster: {
     type: String,
     required: true,
+    index: true,
   },
   tastingNotes: {
     type: [String],
     default: undefined,
   },
-  userId: String,
+  userId: {
+    type: String,
+    index: true,
+  },
 }, { timestamps: true });
+
+roastSchema.index({ _id: 1, userId: 1 })
 
 export default mongoose.model<Roast>("Roast", roastSchema);

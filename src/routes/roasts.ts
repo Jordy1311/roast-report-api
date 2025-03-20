@@ -4,6 +4,7 @@ import { isLoggedIn } from "../middlewares/authMiddleware";
 import {
   createRoast,
   deleteRoast,
+  getDistinctRoasters,
   getUsersRoasts,
   updateRoast,
 } from "../controllers/roasts";
@@ -16,5 +17,7 @@ router.post("/", isLoggedIn, createRoast);
 router.get("/", isLoggedIn, getUsersRoasts);
 router.patch("/:id", isLoggedIn, updateRoast);
 router.delete("/:id", isLoggedIn, deleteRoast);
+
+router.get("/roasters", isLoggedIn, getDistinctRoasters);
 
 export default router;

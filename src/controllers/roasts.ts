@@ -115,3 +115,37 @@ export async function deleteRoast(req: Request, res: Response) {
     return res.status(500).send("Internal server error");
   }
 }
+
+export async function getDistinctRoasters(req: Request, res: Response) {
+  const userId = req.user!.id;
+
+  try {
+    // users distinct roasters
+    // ignoring case-sensitivity, diacritics, whitespace, and punctuation
+    const usersRoasters = await Roast.distinct(
+      'roaster',
+      { _id: userId },
+      { collation: { locale: 'en', strength: 1, alternate: 'shifted' } }
+    );
+
+    // other users distinct roasters that are used by 2 or more different users
+    const commonlyUsedRoastersByOthers = await Roast.aggregate([
+      { $match: { userId: { $ne: userId } } },
+      { $group: { _id: { roaster: "$roaster", userId: "$userId" } } },
+      { $group: { _id: "$_id.roaster", userCount: { $sum: 1 } } },
+      { $match: { userCount: { $gt: 1 } } },
+      { $project: { _id: 0, roaster: "$_id" } }
+    ]);
+
+    const allRoasters: string[] = commonlyUsedRoastersByOthers.map(
+      (item) => item.roaster
+    );
+
+    const mergedRoasters = Array.from(new Set([...usersRoasters, ...allRoasters]));
+
+    return res.status(200).json(mergedRoasters);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("Internal server error");
+  }
+}
