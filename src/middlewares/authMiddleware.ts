@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 const jwt = require("jsonwebtoken");
 
-import { UserTokenPayload } from "../models/User";
+import User, { UserTokenPayload } from "../models/User";
 
 export function isLoggedIn(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
@@ -12,10 +12,13 @@ export function isLoggedIn(req: Request, res: Response, next: NextFunction) {
   jwt.verify(
     token,
     process.env.ACCESS_TOKEN_SECRET,
-    (err: unknown, user: UserTokenPayload) => {
+    async (err: unknown, userToken: UserTokenPayload) => {
       if (err) return res.sendStatus(401);
 
-      req.user = user;
+      const actualUser = await User.findOne({ _id: userToken.id })
+      if (!actualUser) return res.sendStatus(401);
+
+      req.user = userToken;
 
       next();
     },
