@@ -21,8 +21,6 @@ export function isLoggedIn(req: Request, res: Response, next: NextFunction) {
 
       if (!actualUser) return res.sendStatus(401);
 
-      console.log({ actualUser });
-
       req.user = userToken;
 
       next();
