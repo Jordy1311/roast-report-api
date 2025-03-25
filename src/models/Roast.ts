@@ -11,6 +11,7 @@ interface Roast {
   roaster: string;
   tastingNotes?: [string];
   userId: string;
+  deleted: boolean;
 }
 
 const roastSchema = new mongoose.Schema<Roast>({
@@ -43,6 +44,10 @@ const roastSchema = new mongoose.Schema<Roast>({
     type: String,
     index: true,
   },
+  deleted: {
+    type: Boolean,
+    index: true,
+  }
 }, { timestamps: true });
 
 roastSchema.index({ _id: 1, userId: 1 })

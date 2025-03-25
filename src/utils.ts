@@ -1,9 +1,31 @@
+import mongoose from "mongoose";
+
 import { confirmationCodeLength } from "./models/LoginRequest";
+
+export interface ErrorBody {
+  error: string;
+  message?: string;
+  code?: number;
+}
 
 export interface FieldDefinition {
   fieldName: string;
   type: "string" | "array" | "number";
   isRequired?: boolean;
+}
+
+export const ServerErrorBody: ErrorBody = {
+  error: 'Internal server error',
+}
+
+/**
+ * Checks if the provided string is a valid MongoDB ObjectId.
+ *
+ * @param id - The string to validate as a MongoDB ObjectId.
+ * @returns `true` if the string is a valid ObjectId, otherwise `false`.
+ */
+export function isValidObjectId(id: string): boolean {
+  return mongoose.Types.ObjectId.isValid(id);
 }
 
 /**

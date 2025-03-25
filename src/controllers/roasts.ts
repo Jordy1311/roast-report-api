@@ -1,10 +1,19 @@
 import { Request, Response } from "express";
 
 import Roast from "../models/Roast";
-import { FieldDefinition, isValidRequest, pick } from "../utils";
+import {
+  ErrorBody,
+  FieldDefinition,
+  ServerErrorBody,
+  isValidObjectId,
+  isValidRequest,
+  pick
+} from "../utils";
 
 export async function createRoast(req: Request, res: Response) {
   try {
+    const newRoastData = req.body;
+
     // TODO: doing this everywhere will suck, we should make it better somehow
     const expectedFields: FieldDefinition[] = [
       { fieldName: "name", type: "string", isRequired: true },
@@ -18,12 +27,18 @@ export async function createRoast(req: Request, res: Response) {
       { fieldName: "notes", type: "string" },
     ];
 
-    if (!isValidRequest(req.body, expectedFields)) {
-      return res.status(400).send("Missing fields or incorrect field types");
+    if (!isValidRequest(newRoastData, expectedFields)) {
+      const errorBody: ErrorBody = {
+        error: "Invalid request",
+        message: "Missing fields or incorrect field types"
+      };
+
+      return res.status(400).send(errorBody);
     }
 
+    // prevent user creating something we don't want
     const cleanRoastData = pick(
-      req.body,
+      newRoastData,
       expectedFields.map((field) => field.fieldName),
     );
 
@@ -32,37 +47,51 @@ export async function createRoast(req: Request, res: Response) {
       ...cleanRoastData,
     });
 
-    return res.status(201).json(newCoffee);
+    return res.status(201).send(newCoffee);
   } catch (err) {
     console.error(err);
-    return res.status(500).send("Internal server error");
+    return res.status(500).send(ServerErrorBody);
   }
 }
 
 export async function getUsersRoasts(req: Request, res: Response) {
   try {
-    const usersRoasts = await Roast.find({ userId: req.user!.id })
+    const usersRoasts = await Roast
+      .find({ userId: req.user!.id, deleted: { $ne: true } })
       .sort({ createdAt: 1 })
       .lean();
 
-    return res.status(200).json(usersRoasts);
+    return res.status(200).send(usersRoasts);
   } catch (err) {
     console.error(err);
-    return res.status(500).json("Internal server error");
+    return res.status(500).send(ServerErrorBody);
   }
 }
 
 export async function updateRoast(req: Request, res: Response) {
   try {
     const roastIdToBeUpdated = req.params.id;
+
+    if (!roastIdToBeUpdated || !isValidObjectId(roastIdToBeUpdated)) {
+      const errorBody: ErrorBody = {
+        error: "Invalid request",
+        message: "Missing or invalid id"
+      };
+
+      return res.status(400).send(errorBody);
+    }
+
     const roastToBeUpdated = await Roast.findOne({
       _id: roastIdToBeUpdated,
       userId: req.user!.id,
+      deleted: { $ne: true },
     }).lean();
 
     if (!roastToBeUpdated) {
       return res.sendStatus(404);
     }
+
+    const updatedRoastData = req.body;
 
     const expectedFields: FieldDefinition[] = [
       { fieldName: "name", type: "string" },
@@ -76,76 +105,95 @@ export async function updateRoast(req: Request, res: Response) {
       { fieldName: "notes", type: "string" },
     ];
 
-    if (!isValidRequest(req.body, expectedFields)) {
-      return res.status(400).send("Missing fields or incorrect field types");
+    if (!isValidRequest(updatedRoastData, expectedFields)) {
+      const errorBody: ErrorBody = {
+        error: "Invalid request",
+        message: "Missing fields or incorrect field types"
+      };
+
+      return res.status(400).send(errorBody);
     }
 
     const cleanRoastData = pick(
-      req.body,
+      updatedRoastData,
       expectedFields.map((field) => field.fieldName),
     );
 
     const updatedRoast = await Roast.findOneAndUpdate(
-      { _id: roastIdToBeUpdated, userId: req.user!.id },
+      { _id: roastIdToBeUpdated, userId: req.user!.id, deleted: { $ne: true } },
       cleanRoastData,
       { new: true },
     );
 
-    return res.status(200).json(updatedRoast);
+    return res.status(200).send(updatedRoast);
   } catch (err) {
     console.error(err);
-    return res.status(500).send("Internal server error");
+    return res.status(500).send(ServerErrorBody);
   }
 }
 
 export async function deleteRoast(req: Request, res: Response) {
-  try {
-    const deleteResponse = await Roast.deleteOne({
-      _id: req.params.id,
-      userId: req.user!.id,
-    });
+  const roastIdToBeDeleted = req.params.id;
 
-    if (deleteResponse.deletedCount) {
+  if (!roastIdToBeDeleted || !isValidObjectId(roastIdToBeDeleted)) {
+    const errorBody: ErrorBody = {
+      error: "Invalid request",
+      message: "Missing or invalid id"
+    };
+
+    res.status(400).send(errorBody);
+  }
+
+  try {
+    const deleteResponse = await Roast.findOneAndUpdate(
+      { _id: roastIdToBeDeleted, userId: req.user!.id },
+      { deleted: true },
+      { new: true }
+    );
+
+    if (deleteResponse!.deleted) {
       return res.sendStatus(204);
     } else {
       return res.sendStatus(404);
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).send("Internal server error");
+    return res.status(500).send(ServerErrorBody);
   }
 }
 
 export async function getDistinctRoasters(req: Request, res: Response) {
   const userId = req.user!.id;
+  const usesThreshold: number = 1;
 
   try {
     // users distinct roasters
     // ignoring case-sensitivity, diacritics, whitespace, and punctuation
     const usersRoasters = await Roast.distinct(
       'roaster',
-      { userId },
+      { userId, deleted: { $ne: true } },
       { collation: { locale: 'en', strength: 1, alternate: 'shifted' } }
     );
 
-    // other users distinct roasters that are used by 2 or more different users
+    // other users distinct roasters
+    // that are used by more than {{ usesThreshold }} different users
     const commonlyUsedRoastersByOthers = await Roast.aggregate([
-      { $match: { userId: { $ne: userId } } },
+      { $match: { userId: { $ne: userId }, deleted: { $ne: true } } },
       { $group: { _id: { roaster: "$roaster", userId: "$userId" } } },
       { $group: { _id: "$_id.roaster", userCount: { $sum: 1 } } },
-      { $match: { userCount: { $gt: 1 } } },
+      { $match: { userCount: { $gt: usesThreshold } } },
       { $project: { _id: 0, roaster: "$_id" } }
     ]);
 
-    const allRoasters: string[] = commonlyUsedRoastersByOthers.map(
+    const othersRoasters: string[] = commonlyUsedRoastersByOthers.map(
       (item) => item.roaster
     );
 
-    const mergedRoasters = Array.from(new Set([...usersRoasters, ...allRoasters]));
+    const mergedRoasters = Array.from(new Set([...usersRoasters, ...othersRoasters]));
 
-    return res.status(200).json(mergedRoasters);
+    return res.status(200).send(mergedRoasters);
   } catch (err) {
     console.error(err);
-    return res.status(500).send("Internal server error");
+    return res.status(500).send(ServerErrorBody);
   }
 }
