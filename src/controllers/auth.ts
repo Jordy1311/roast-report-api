@@ -4,18 +4,33 @@ const jwt = require("jsonwebtoken");
 import LoginRequest from "../models/LoginRequest";
 import User, { UserTokenPayload } from "../models/User";
 import { sendEmail } from "../email";
-import { isValidEmail, generateConfirmationCode } from "../utils";
+import {
+  isValidEmail,
+  generateConfirmationCode,
+  ServerErrorBody,
+  ErrorBody
+} from "../utils";
 
 export async function requestLogin(req: Request, res: Response) {
   const { email } = req.body;
 
   if (!email) {
-    return res.status(400).send("An email address is required");
+    const errorBody: ErrorBody = {
+      error: "Invalid request",
+      message: "Email address not provided"
+    };
+
+    return res.status(400).send(errorBody);
   }
 
   try {
     if (!isValidEmail(email)) {
-      return res.status(400).send("A valid email address is required");
+      const errorBody: ErrorBody = {
+        error: "Invalid request",
+        message: "Email address not valid"
+      };
+
+      return res.status(400).send(errorBody);
     }
 
     const loginRequest =
@@ -37,10 +52,10 @@ export async function requestLogin(req: Request, res: Response) {
 
     sendEmail([ email ], emailSubject, emailBody);
 
-    return res.status(200).json({ status: "success" });
+    return res.status(200).send({ status: "success" });
   } catch (err) {
     console.error(err);
-    return res.status(500).send("Internal server error");
+    return res.status(500).send(ServerErrorBody);
   }
 }
 
@@ -51,7 +66,12 @@ export async function confirmLogin(req: Request, res: Response) {
     const loginRequest = await LoginRequest.findOne({ confirmationCode }).lean();
 
     if (!loginRequest) {
-      return res.status(400).send("Login request expired or does not exist");
+      const errorBody: ErrorBody = {
+        error: "Invalid request",
+        message: "Login request expired or does not exist"
+      };
+
+      return res.status(400).send(errorBody);
     }
 
     const email = loginRequest.email;
@@ -72,12 +92,15 @@ export async function confirmLogin(req: Request, res: Response) {
         process.env.ACCESS_TOKEN_SECRET,
       );
 
-      return res.status(200).json({ accessToken });
+      return res.status(200).send({ accessToken });
     } else {
-      return res.status(500).send("Internal server error - no user found or created");
+      return res.status(500).send({
+        ...ServerErrorBody,
+        message: "User not found or created"
+      });
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).send("Internal server error");
+    return res.status(500).send(ServerErrorBody);
   }
 }
