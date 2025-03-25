@@ -40,10 +40,10 @@ export async function requestLogin(req: Request, res: Response) {
 
     sendEmail([ email ], emailSubject, emailBody);
 
-    return res.sendStatus(200);
+    return res.sendStatus(204);
   } catch (err) {
     console.error(err);
-    return res.sendStatus(500);
+    return res.status(500).send({ message: "Internal Server Error" });
   }
 }
 
@@ -81,6 +81,6 @@ export async function confirmLogin(req: Request, res: Response) {
     }
   } catch (err) {
     console.error(err);
-    return res.sendStatus(500);
+    return res.status(500).send({ message: "Internal Server Error" });
   }
 }

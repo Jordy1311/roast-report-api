@@ -11,8 +11,6 @@ import {
 export async function createRoast(req: Request, res: Response) {
   try {
     const newRoastData = req.body;
-
-    // TODO: doing this everywhere will suck, we should make it better somehow
     const expectedFields: FieldDefinition[] = [
       { fieldName: "name", type: "string", isRequired: true },
       { fieldName: "roaster", type: "string", isRequired: true },
@@ -43,7 +41,7 @@ export async function createRoast(req: Request, res: Response) {
     return res.status(201).send(newCoffee);
   } catch (err) {
     console.error(err);
-    return res.sendStatus(500);
+    return res.status(500).send({ message: "Internal Server Error" });
   }
 }
 
@@ -57,7 +55,7 @@ export async function getUsersRoasts(req: Request, res: Response) {
     return res.status(200).send(usersRoasts);
   } catch (err) {
     console.error(err);
-    return res.sendStatus(500);
+    return res.status(500).send({ message: "Internal Server Error" });
   }
 }
 
@@ -76,11 +74,12 @@ export async function updateRoast(req: Request, res: Response) {
     }).lean();
 
     if (!roastToBeUpdated) {
-      return res.sendStatus(404);
+      return res.status(404).send(
+        { message: `Roast with id: ${roastIdToBeUpdated} not found` }
+      );
     }
 
     const updatedRoastData = req.body;
-
     const expectedFields: FieldDefinition[] = [
       { fieldName: "name", type: "string" },
       { fieldName: "roaster", type: "string" },
@@ -111,7 +110,7 @@ export async function updateRoast(req: Request, res: Response) {
     return res.status(200).send(updatedRoast);
   } catch (err) {
     console.error(err);
-    return res.sendStatus(500);
+    return res.status(500).send({ message: "Internal Server Error" });
   }
 }
 
@@ -132,11 +131,13 @@ export async function deleteRoast(req: Request, res: Response) {
     if (deleteResponse?.deleted) {
       return res.sendStatus(204);
     } else {
-      return res.sendStatus(404);
+      return res.status(404).send(
+        { message: `Roast with id: ${roastIdToBeDeleted} not found` }
+      );
     }
   } catch (err) {
     console.error(err);
-    return res.sendStatus(500);
+    return res.status(500).send({ message: "Internal Server Error" });
   }
 }
 
@@ -172,6 +173,6 @@ export async function getDistinctRoasters(req: Request, res: Response) {
     return res.status(200).send(mergedRoasters);
   } catch (err) {
     console.error(err);
-    return res.sendStatus(500);
+    return res.status(500).send({ message: "Internal Server Error" });
   }
 }
