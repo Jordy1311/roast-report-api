@@ -2,20 +2,10 @@ import mongoose from "mongoose";
 
 import { confirmationCodeLength } from "./models/LoginRequest";
 
-export interface ErrorBody {
-  error: string;
-  message?: string;
-  code?: number;
-}
-
 export interface FieldDefinition {
   fieldName: string;
   type: "string" | "array" | "number";
   isRequired?: boolean;
-}
-
-export const ServerErrorBody: ErrorBody = {
-  error: 'Internal server error',
 }
 
 /**

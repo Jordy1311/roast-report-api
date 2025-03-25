@@ -7,30 +7,18 @@ import { sendEmail } from "../email";
 import {
   isValidEmail,
   generateConfirmationCode,
-  ServerErrorBody,
-  ErrorBody
 } from "../utils";
 
 export async function requestLogin(req: Request, res: Response) {
   const { email } = req.body;
 
   if (!email) {
-    const errorBody: ErrorBody = {
-      error: "Invalid request",
-      message: "Email address not provided"
-    };
-
-    return res.status(400).send(errorBody);
+    return res.status(400).json({ message: "Email address not provided" });
   }
 
   try {
     if (!isValidEmail(email)) {
-      const errorBody: ErrorBody = {
-        error: "Invalid request",
-        message: "Email address not valid"
-      };
-
-      return res.status(400).send(errorBody);
+      return res.status(400).send({ message: "Email address not valid"});
     }
 
     const loginRequest =
@@ -52,10 +40,10 @@ export async function requestLogin(req: Request, res: Response) {
 
     sendEmail([ email ], emailSubject, emailBody);
 
-    return res.status(200).send({ status: "success" });
+    return res.sendStatus(200);
   } catch (err) {
     console.error(err);
-    return res.status(500).send(ServerErrorBody);
+    return res.sendStatus(500);
   }
 }
 
@@ -66,12 +54,7 @@ export async function confirmLogin(req: Request, res: Response) {
     const loginRequest = await LoginRequest.findOne({ confirmationCode }).lean();
 
     if (!loginRequest) {
-      const errorBody: ErrorBody = {
-        error: "Invalid request",
-        message: "Login request expired or does not exist"
-      };
-
-      return res.status(400).send(errorBody);
+      return res.status(400).send({ message: "Login request expired or not found" });
     }
 
     const email = loginRequest.email;
@@ -94,13 +77,10 @@ export async function confirmLogin(req: Request, res: Response) {
 
       return res.status(200).send({ accessToken });
     } else {
-      return res.status(500).send({
-        ...ServerErrorBody,
-        message: "User not found or created"
-      });
+      return res.status(500).send({ message: "User not found or created" });
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).send(ServerErrorBody);
+    return res.sendStatus(500);
   }
 }

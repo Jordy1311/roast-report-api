@@ -2,9 +2,7 @@ import { Request, Response } from "express";
 
 import Roast from "../models/Roast";
 import {
-  ErrorBody,
   FieldDefinition,
-  ServerErrorBody,
   isValidObjectId,
   isValidRequest,
   pick
@@ -28,12 +26,7 @@ export async function createRoast(req: Request, res: Response) {
     ];
 
     if (!isValidRequest(newRoastData, expectedFields)) {
-      const errorBody: ErrorBody = {
-        error: "Invalid request",
-        message: "Missing fields or incorrect field types"
-      };
-
-      return res.status(400).send(errorBody);
+      return res.status(400).send({ message: "Missing fields or incorrect field types" });
     }
 
     // prevent user creating something we don't want
@@ -50,7 +43,7 @@ export async function createRoast(req: Request, res: Response) {
     return res.status(201).send(newCoffee);
   } catch (err) {
     console.error(err);
-    return res.status(500).send(ServerErrorBody);
+    return res.sendStatus(500);
   }
 }
 
@@ -64,7 +57,7 @@ export async function getUsersRoasts(req: Request, res: Response) {
     return res.status(200).send(usersRoasts);
   } catch (err) {
     console.error(err);
-    return res.status(500).send(ServerErrorBody);
+    return res.sendStatus(500);
   }
 }
 
@@ -73,12 +66,7 @@ export async function updateRoast(req: Request, res: Response) {
     const roastIdToBeUpdated = req.params.id;
 
     if (!roastIdToBeUpdated || !isValidObjectId(roastIdToBeUpdated)) {
-      const errorBody: ErrorBody = {
-        error: "Invalid request",
-        message: "Missing or invalid id"
-      };
-
-      return res.status(400).send(errorBody);
+      return res.status(400).send({ message: "Missing or invalid id" });
     }
 
     const roastToBeUpdated = await Roast.findOne({
@@ -106,12 +94,7 @@ export async function updateRoast(req: Request, res: Response) {
     ];
 
     if (!isValidRequest(updatedRoastData, expectedFields)) {
-      const errorBody: ErrorBody = {
-        error: "Invalid request",
-        message: "Missing fields or incorrect field types"
-      };
-
-      return res.status(400).send(errorBody);
+      return res.status(400).send({ message: "Missing fields or incorrect field types" });
     }
 
     const cleanRoastData = pick(
@@ -128,7 +111,7 @@ export async function updateRoast(req: Request, res: Response) {
     return res.status(200).send(updatedRoast);
   } catch (err) {
     console.error(err);
-    return res.status(500).send(ServerErrorBody);
+    return res.sendStatus(500);
   }
 }
 
@@ -136,12 +119,7 @@ export async function deleteRoast(req: Request, res: Response) {
   const roastIdToBeDeleted = req.params.id;
 
   if (!roastIdToBeDeleted || !isValidObjectId(roastIdToBeDeleted)) {
-    const errorBody: ErrorBody = {
-      error: "Invalid request",
-      message: "Missing or invalid id"
-    };
-
-    res.status(400).send(errorBody);
+    res.status(400).send({ message: "Missing or invalid id" });
   }
 
   try {
@@ -151,14 +129,14 @@ export async function deleteRoast(req: Request, res: Response) {
       { new: true }
     );
 
-    if (deleteResponse!.deleted) {
+    if (deleteResponse?.deleted) {
       return res.sendStatus(204);
     } else {
       return res.sendStatus(404);
     }
   } catch (err) {
     console.error(err);
-    return res.status(500).send(ServerErrorBody);
+    return res.sendStatus(500);
   }
 }
 
@@ -194,6 +172,6 @@ export async function getDistinctRoasters(req: Request, res: Response) {
     return res.status(200).send(mergedRoasters);
   } catch (err) {
     console.error(err);
-    return res.status(500).send(ServerErrorBody);
+    return res.sendStatus(500);
   }
 }
