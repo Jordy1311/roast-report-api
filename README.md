@@ -1,35 +1,40 @@
-# Roast Report API
+# Roast Report API ☕️
 
-This is the backend to the frontend located in [this repo](https://github.com/Jordy1311/roast-report).
+This is the back-end API for Roast Report - a coffee roast tracking app.
 
-Auth is achieved through an email only approach using the user's access to their emails as a sort of password.
+Find out more about this project in the [front-end repo](https://github.com/Jordy1311/roast-report).
 
-JWTs are issued without expiry and there is yet to be a refreshing token mechanism.
+You'll find the live project here: https://roastreport.web.app/
 
-## To run:
+## To run yourself 🏃
+There really isn't a need to run this yourself but if you wanted to fork or take a nosey at some very standard code see below.
 
-There is a docker file which you can build and run locally or you can follow the process below.
-NOTE: you will still need to create and pass the docker container a .env with the variables described below.
+### Prerequisites
+
+*   Node.js (I use version 22.14.0)
+*   MongoDB instance
+*   A Gmail account for sending emails
+
+### Setup & Running the Application
 
 1. Clone this repo
-
-2. Create a `.env` at the root dir and define:
-
-```
-PORT=<port the app will run on>
-MONGODB_URI=<your own mongodb connectionString>
-ACCESS_TOKEN_SECRET=<your own random secret>
-EMAIL_USER=<a gmail account to send signup/signin emails to>
-EMAIL_KEY=<a key generated on the gmail account to allow nodemailer to send emails>
-# email docs here: https://www.nodemailer.com/usage/using-gmail/
-```
-
-3. Run `npm ci`
-
+2. Set up a `.env` file at the root of the project as below
+3. Install packages with either Yarn or NPM
 4. Run `npm run dev`
 
-<br/>
+The server will start and reload on any file changes.
 
-The server will start on the specified port (_or 3000 if not specified_) and connect to your mongoDB instance.
+Note: This will be serving the source files directly so no build step is required for development.
 
-You don't have to run in development mode but you will have to `build` and `run` in seperate commands. This way is just quick and allows for code changes to trigger reloading.
+### `.env` Example
+```dotenv
+PORT=3000
+DOMAIN=<the-url-to-this-server>
+FE_DOMAIN=<the-url-to-the-frontend> # This needs to be reciprecated by the frontend for requests to come back to this server
+
+ACCESS_TOKEN_SECRET=<your-own-random-secret> # Used for signing JWTs
+
+MONGODB_URI=<your-own-mongodb-connectionString>
+
+EMAIL_USER=<a-gmail-account-to-send-signup/signin-emails-from>
+EMAIL_KEY=<a-key-generated-on-the-gmail-account> # App Password from Google Account Security settings. See: https://www.nodemailer.com/usage/using-gmail/
